@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <title>MÜKEMMEL 8/C QUİZİ</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Firebase SDK'ları burada olmalı -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "API_KEYİNİZİ_BURAYA_YAPISTIRIN",
+        authDomain: "quiz-goz.firebaseapp.com",
+        projectId: "quiz-goz",
+        storageBucket: "quiz-goz.firebasestorage.app",
+        messagingSenderId: "821592763397",
+        appId: "1:821592763397:web:37ca320cab7853a642c06c",
+        measurementId: "G-FZDNJRW16L"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+</head>
+<body>
+    <div id="start-screen">
+        <h1> 8/C Quizi </h1>
+        <h1> Hazır Mısın? </h1>
+        <p>İsmini yaz ve testi başlat!</p>
+        <input type="text" id="username" placeholder="Adını yaz" />
+        <button onclick="startQuiz()">Başla</button>
+    </div>
+
+    <div id="quiz-screen" style="display:none;">
+        <h2 id="question-number"></h2>
+        <img id="quiz-image" src="" alt="Hayvan Gözü" />
+        <div id="options"></div>
+    </div>
+
+    <div id="result-screen" style="display:none;">
+        <h2>Test Tamamlandı!</h2>
+        <p>Teşekkürler <span id="user-name"></span>!</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

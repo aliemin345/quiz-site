@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Skorlar</title>
+
+  <!-- Firebase SDK'ları -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = { 
+      apiKey: "AIzaSyDGvhTG2Tqh0LP_goJna_2hL9KFYuOKyek",
+      authDomain: "quiz-goz.firebaseapp.com",
+      projectId: "quiz-goz",
+      storageBucket: "quiz-goz.firebasestorage.app",
+      messagingSenderId: "821592763397",
+      appId: "1:821592763397:web:37ca320cab7853a642c06c",
+      measurementId: "G-FZDNJRW16L"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: #f0f8ff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+      word-break: break-word;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    button.delete-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button.delete-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel - Skorlar</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>İsim</th>
+        <th>Skor</th>
+        <th>Cevaplar</th>
+        <th>Zaman</th>
+        <th>İşlem</th>
+      </tr>
+    </thead>
+    <tbody id="scores-table-body">
+      <tr><td colspan="5">Yükleniyor...</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    async function loadScores() {
+      const tbody = document.getElementById("scores-table-body");
+      tbody.innerHTML = "<tr><td colspan='5'>Yükleniyor...</td></tr>";
+
+      try {
+        const snapshot = await db.collection("scores").orderBy("timestamp", "desc").get();
+        if (snapshot.empty) {
+          tbody.innerHTML = "<tr><td colspan='5'>Henüz skor yok.</td></tr>";
+          return;
+        }
+
+        tbody.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const id = doc.id;  // Firestore doküman id'si
+          const date = data.timestamp ? data.timestamp.toDate().toLocaleString() : "Bilinmiyor";
+          
+          let answersText = "Yok";
+          if (data.answers && data.answers.length) {
+            answersText = data.answers.map((a, i) => `S${i + 1}: ${a}`).join(", ");
+          }
+
+          tbody.innerHTML += `
+            <tr>
+              <td>${data.name}</td>
+              <td>${data.score}</td>
+              <td>${answersText}</td>
+              <td>${date}</td>
+              <td><button class="delete-btn" onclick="deleteScore('${id}')">Sil</button></td>
+            </tr>
+          `;
+        });
+      } catch (error) {
+        tbody.innerHTML = `<tr><td colspan='5'>Hata: ${error.message}</td></tr>`;
+      }
+    }
+
+    async function deleteScore(docId) {
+      if (!confirm("Bu skoru silmek istediğine emin misin?")) return;
+
+      try {
+        await db.collection("scores").doc(docId).delete();
+        alert("Kayıt silindi.");
+        loadScores();  // Tabloyu güncelle
+      } catch (error) {
+        alert("Silme işlemi sırasında hata oluştu: " + error.message);
+      }
+    }
+
+    loadScores();
+  </script>
+</body>
+</html>
