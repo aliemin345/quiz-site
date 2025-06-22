@@ -1,2 +1,2 @@
 # Quiz Site
-Bu, SINIF uygulamasıdır.
+Bu, SINIF Quizi uygulamasıdır.
